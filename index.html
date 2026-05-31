@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>محاكي كاشير البقالة</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game">
+        <div id="gameArea">
+            <div id="ui">
+                <div id="topBar">
+                    <div class="ui-group">
+                        <button class="ui-btn" onclick="toggleComputer()">💻 كمبيوتر</button>
+                        <button class="ui-btn" onclick="togglePriceList()">📋 الأسعار</button>
+                    </div>
+                    <div id="statsBox">
+                        <div id="day">السبت</div>
+                        <div id="time">08:00</div>
+                        <div id="money">50,000 د.ع</div>
+                    </div>
+                </div>
+                <div id="combo"></div>
+                <button id="startDayBtn" class="main-btn" onclick="startDay()">▶️ ابدأ الدوام</button>
+                <div id="marketDomination">
+                    <div id="marketTitle">الهيمنة على السوق</div>
+                    <div id="marketBar">
+                        <div id="playerMarket" class="market-segment" style="width:10%">10%</div>
+                        <div id="comp1Market" class="market-segment" style="width:30%"></div>
+                        <div id="comp2Market" class="market-segment" style="width:30%"></div>
+                        <div id="comp3Market" class="market-segment" style="width:30%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- رفوف المحل -->
+            <div id="shelves">
+                <div class="shelf" id="shelf1"></div>
+                <div class="shelf" id="shelf2"></div>
+            </div>
+
+            <!-- منطقة الزبون - هذا حل مشكلة التداخل -->
+ <div id="customerArea">
+    <div id="customer" style="display:none">
+        <div id="customerBody">
+            <div id="customerFace">😊</div>
+        </div>
+        <div id="customerUI">
+            <div id="angerBar"><div id="angerFill"></div></div>
+            <div id="orderBox"></div>
+        </div>
+    </div>
+</div>
+
+        <div id="cashRegister">
+            <div id="priceDisplay">0</div>
+            <div id="keypad">
+                <button class="key" onclick="addNum(1)">1</button>
+                <button class="key" onclick="addNum(2)">2</button>
+                <button class="key" onclick="addNum(3)">3</button>
+                <button class="key" onclick="addNum(4)">4</button>
+                <button class="key" onclick="addNum(5)">5</button>
+                <button class="key" onclick="addNum(6)">6</button>
+                <button class="key" onclick="addNum(7)">7</button>
+                <button class="key" onclick="addNum(8)">8</button>
+                <button class="key" onclick="addNum(9)">9</button>
+                <button class="key key-clear" onclick="clearNum()">C</button>
+                <button class="key" onclick="addNum(0)">0</button>
+                <button class="key key-enter" onclick="checkPrice()">✓</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة الأسعار -->
+    <div id="priceListModal" class="modal">
+        <div class="modal-content">
+            <h2>قائمة أسعار المواد</h2>
+            <div id="priceListItems"></div>
+            <button class="modal-btn" onclick="togglePriceList()">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- نافذة الكمبيوتر -->
+    <div id="computerModal" class="modal">
+        <div class="modal-content" style="max-width: 360px;">
+            <h2>💻 كمبيوتر المحل</h2>
+
+            <!-- التبويبات -->
+            <div id="computerTabs">
+                <button class="tab-btn active" onclick="switchTab('main')">الرئيسية</button>
+                <button class="tab-btn" onclick="switchTab('stock')">المخزن</button>
+                <button class="tab-btn" onclick="switchTab('upgrades')">الترقيات</button>
+                <button class="tab-btn" onclick="switchTab('stats')">إحصائيات</button>
+            </div>
+
+            <!-- محتوى التبويبات -->
+            <div id="tab-main" class="tab-content active">
+                <div class="info-row"><span>رصيدك الحالي:</span><span id="comp-money">0 د.ع</span></div>
+                <div class="info-row"><span>ربح اليوم:</span><span id="comp-daily-profit">0 د.ع</span></div>
+                <div class="info-row"><span>الأيام للإيجار:</span><span id="comp-rent-days">7 أيام</span></div>
+                <div class="info-row"><span>قيمة الإيجار:</span><span id="comp-rent-amount">200,000 د.ع</span></div>
+                <div class="info-row"><span>الهيمنة على السوق:</span><span id="comp-market">10%</span></div>
+            </div>
+
+            <div id="tab-stock" class="tab-content">
+                <button class="modal-btn" style="background:#27ae60; margin-bottom:10px;" onclick="restockAll()">تعبئة كاملة - 50,000 د.ع</button>
+                <div id="stockBuyList"></div>
+            </div>
+
+            <div id="tab-upgrades" class="tab-content">
+                <div class="upgrade-item">
+                    <div class="upgrade-info"><strong>رفوف إضافية</strong><span>+1 مادة بالطلبية</span></div>
+                    <button class="upgrade-btn" id="upg-shelf" onclick="buyUpgrade('shelf')">75,000</button>
+                </div>
+                <div class="upgrade-item">
+                    <div class="upgrade-info"><strong>كراسي انتظار</strong><span>صبر الزبون +50%</span></div>
+                    <button class="upgrade-btn" id="upg-chair" onclick="buyUpgrade('chair')">125,000</button>
+                </div>
+                <div class="upgrade-item">
+                    <div class="upgrade-info"><strong>موظف كاشير</strong><span>يبيع تلقائي كل 10 ثواني</span></div>
+                    <button class="upgrade-btn" id="upg-employee" onclick="buyUpgrade('employee')">400,000</button>
+                </div>
+                <div class="upgrade-item">
+                    <div class="upgrade-info"><strong>توسعة المحل</strong><span>تصميم جديد فخم</span></div>
+                    <button class="upgrade-btn" id="upg-expand" onclick="buyUpgrade('expand')">1,000,000</button>
+                </div>
+            </div>
+
+            <div id="tab-stats" class="tab-content">
+                <div class="info-row"><span>إجمالي الزبائن:</span><span id="comp-total-customers">0</span></div>
+                <div class="info-row"><span>أفضل ربح يومي:</span><span id="comp-best-day">0 د.ع</span></div>
+                <div class="info-row"><span>أطول كومبو:</span><span id="comp-best-combo">0</span></div>
+                <div class="info-row"><span>أيام اللعب:</span><span id="comp-days-played">0</span></div>
+            </div>
+
+            <button class="modal-btn" onclick="toggleComputer()">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- نافذة نهاية اليوم -->
+    <div id="endDayModal" class="modal">
+        <div class="modal-content">
+            <h2>انتهى الدوام!</h2>
+            <p id="endDayStats"></p>
+            <button class="modal-btn" onclick="closeEndDay()">حسناً</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
